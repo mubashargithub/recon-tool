@@ -1,4 +1,4 @@
-"""
+    """
 Recon — Subdomain Enumeration & Security Reconnaissance Dashboard
 ===================================================================
 Performs:
@@ -36,12 +36,16 @@ from engine import (
     run_full_scan, save_results_json, save_results_text, results_to_csv_rows,
     validate_domain, validate_ip,
 )
-from theme import CSS, grade_badge, risk_pill, tech_chips
+from theme import build_css, grade_badge, risk_pill, tech_chips
 
 st.set_page_config(page_title="Recon — Subdomain & Security Scanner", page_icon="🛰️", layout="wide")
-st.markdown(CSS, unsafe_allow_html=True)
 
 MAX_HISTORY = 8
+
+if "theme_mode" not in st.session_state:
+    st.session_state["theme_mode"] = "dark"
+
+st.markdown(build_css(st.session_state["theme_mode"]), unsafe_allow_html=True)
 
 
 # --------------------------------------------------------------------------
@@ -106,6 +110,17 @@ st.warning(
 # --------------------------------------------------------------------------
 
 with st.sidebar:
+    theme_choice = st.radio(
+        "Appearance", ["Dark", "Light"],
+        index=0 if st.session_state["theme_mode"] == "dark" else 1,
+        horizontal=True, key="theme_radio",
+    )
+    new_mode = theme_choice.lower()
+    if new_mode != st.session_state["theme_mode"]:
+        st.session_state["theme_mode"] = new_mode
+        st.rerun()
+
+    st.divider()
     st.header("Scan configuration")
     domain = st.text_input("Target domain", placeholder="example.com")
 
@@ -487,3 +502,4 @@ elif st.session_state.get("domain_scanned") is None:
             "- Fingerprints common web technologies and surfaces relevant advisories\n"
             "- Scores overall risk per host and lets you compare scans over time"
         )
+      
