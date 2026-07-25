@@ -84,6 +84,17 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+st.markdown(
+    """
+    <div class="mobile-sidebar-hint">
+        <div class="arrow-icon">›</div>
+        <div>Tap the <strong>arrow in the top-left corner</strong> to open scan settings
+        (domain, wordlist, checks) and start a scan.</div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
 st.warning(
     "**Authorized use only.** Only scan domains you own or have explicit written permission to test. "
     "Unauthorized scanning may be illegal in your jurisdiction.",
