@@ -1,138 +1,201 @@
-"""Visual theme: dark ops-console styling for the recon dashboard."""
+"""Visual theme: dual-mode (dark/light) ops-console styling for the recon dashboard."""
 
-CSS = """
+# --------------------------------------------------------------------------
+# Token systems
+# --------------------------------------------------------------------------
+# Dark: deep console black with a teal signature accent — the original
+# identity of the tool, kept as-is because it already reads as "scanner
+# console" without leaning on a generic AI-purple/near-black default.
+#
+# Light: not an inverted dark theme. It's a considered daylight palette —
+# cool slate-white background, true white panels for depth, and the same
+# teal accent darkened just enough to hold contrast on white.
+
+DARK_TOKENS = {
+    "bg":         "#0B0E11",
+    "bg-grad":    "#101720",
+    "panel":      "#12161C",
+    "panel-2":    "#171C24",
+    "line":       "#232A33",
+    "text":       "#E8ECF1",
+    "muted":      "#7A8699",
+    "accent":     "#00D9C0",
+    "accent-ink": "#04211D",
+    "accent-dim": "#0A3D38",
+    "accent-hover": "#10E8CE",
+    "good":       "#2ED573",
+    "good-soft":  "#7BE0A0",
+    "warn":       "#FFC048",
+    "bad":        "#FF4757",
+    "bad-soft":   "#FF8A5C",
+    "shadow":     "0 4px 14px rgba(0,0,0,0.45)",
+}
+
+LIGHT_TOKENS = {
+    "bg":         "#F5F7F9",
+    "bg-grad":    "#EAF3F1",
+    "panel":      "#FFFFFF",
+    "panel-2":    "#F1F4F7",
+    "line":       "#DCE2E8",
+    "text":       "#1B222B",
+    "muted":      "#5B6672",
+    "accent":     "#00A896",
+    "accent-ink": "#FFFFFF",
+    "accent-dim": "#CFF0EA",
+    "accent-hover": "#009585",
+    "good":       "#1F9D5C",
+    "good-soft":  "#2E7D4F",
+    "warn":       "#B8790A",
+    "bad":        "#E13849",
+    "bad-soft":   "#D65C3C",
+    "shadow":     "0 4px 14px rgba(20,30,40,0.08)",
+}
+
+
+def build_css(mode: str = "dark") -> str:
+    """Return the full <style> block for the given mode ('dark' or 'light')."""
+    t = LIGHT_TOKENS if mode == "light" else DARK_TOKENS
+    header_bg = t["panel"]
+
+    return f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
-:root {
-    --bg:        #0B0E11;
-    --panel:     #12161C;
-    --panel-2:   #171C24;
-    --line:      #232A33;
-    --text:      #E8ECF1;
-    --muted:     #7A8699;
-    --accent:    #00D9C0;
-    --accent-dim:#0A3D38;
-    --good:      #2ED573;
-    --warn:      #FFC048;
-    --bad:       #FF4757;
-}
+:root {{
+    --bg:          {t['bg']};
+    --bg-grad:     {t['bg-grad']};
+    --panel:       {t['panel']};
+    --panel-2:     {t['panel-2']};
+    --line:        {t['line']};
+    --text:        {t['text']};
+    --muted:       {t['muted']};
+    --accent:      {t['accent']};
+    --accent-ink:  {t['accent-ink']};
+    --accent-dim:  {t['accent-dim']};
+    --accent-hover:{t['accent-hover']};
+    --good:        {t['good']};
+    --good-soft:   {t['good-soft']};
+    --warn:        {t['warn']};
+    --bad:         {t['bad']};
+    --bad-soft:    {t['bad-soft']};
+    --shadow:      {t['shadow']};
+}}
 
-html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-.stApp { background: radial-gradient(circle at 15% 0%, #101720 0%, var(--bg) 45%); }
+html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
+.stApp {{
+    background: radial-gradient(circle at 15% 0%, var(--bg-grad) 0%, var(--bg) 45%);
+    color: var(--text);
+}}
 
 /* Push page content below the solid header so nothing hides underneath it */
-.main .block-container { padding-top: 1.5rem; }
+.main .block-container {{ padding-top: 1.5rem; max-width: 1200px; }}
 
-code, .mono, [data-testid="stMetricValue"] {
+code, .mono, [data-testid="stMetricValue"] {{
     font-family: 'JetBrains Mono', monospace !important;
-}
+}}
 
 /* Hide default chrome for a tighter console feel */
-#MainMenu, footer { visibility: hidden; }
+#MainMenu, footer {{ visibility: hidden; }}
 
 /* ---- Fix the top toolbar (Share / star / edit / GitHub / >> icons) ----
    These sit in Streamlit's header, which we don't want fully invisible —
-   just restyled to match the dark theme so every icon stays legible on
+   just restyled to match the active theme so every icon stays legible on
    both light and dark host backgrounds (browser chrome, embeds, etc). */
-header[data-testid="stHeader"] {
-    background: var(--panel) !important;
+header[data-testid="stHeader"] {{
+    background: {header_bg} !important;
     border-bottom: 1px solid var(--line);
-}
-header[data-testid="stHeader"] * {
+}}
+header[data-testid="stHeader"] * {{
     color: var(--text) !important;
     fill: var(--text) !important;
     opacity: 1 !important;
-}
-header[data-testid="stHeader"] svg {
+}}
+header[data-testid="stHeader"] svg {{
     stroke: var(--text) !important;
-}
-header[data-testid="stHeader"] button:hover {
+}}
+header[data-testid="stHeader"] button:hover {{
     background: var(--panel-2) !important;
     border-radius: 6px;
-}
-/* The "Share", "Star", "Edit", "GitHub" toolbar actions */
+}}
 [data-testid="stToolbarActions"] button,
-[data-testid="stToolbarActions"] a {
+[data-testid="stToolbarActions"] a {{
     color: var(--text) !important;
-}
+}}
 [data-testid="stToolbarActions"] button:hover,
-[data-testid="stToolbarActions"] a:hover {
+[data-testid="stToolbarActions"] a:hover {{
     background: var(--panel-2) !important;
-}
-/* The ">>" deploy/expand control */
+}}
 [data-testid="stDecoration"],
-[data-testid="stStatusWidget"] {
+[data-testid="stStatusWidget"] {{
     background: transparent !important;
-}
+}}
 
-/* ---- Sidebar-open control (the arrow that opens scan settings) ----
-   Restyled as a clear, unmistakable pill-shaped button instead of the
-   default barely-visible icon, with a short always-visible label so
-   nobody has to guess what it does. */
-[data-testid="collapsedControl"] {
+/* ---- Sidebar ---- */
+section[data-testid="stSidebar"] {{
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+}}
+
+/* ---- Sidebar-open control ---- */
+[data-testid="collapsedControl"] {{
     background: var(--accent) !important;
     border-radius: 10px !important;
-    box-shadow: 0 0 0 4px rgba(0,217,192,0.18), 0 4px 14px rgba(0,0,0,0.45) !important;
+    box-shadow: 0 0 0 4px var(--accent-dim), var(--shadow) !important;
     animation: nudge 1.6s ease-in-out infinite;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     min-width: 40px !important;
     min-height: 40px !important;
-}
-[data-testid="collapsedControl"] svg {
-    fill: #04211D !important;
-    stroke: #04211D !important;
+}}
+[data-testid="collapsedControl"] svg {{
+    fill: var(--accent-ink) !important;
+    stroke: var(--accent-ink) !important;
     width: 22px !important;
     height: 22px !important;
-}
-@keyframes nudge {
-    0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(4px); }
-}
-@media (prefers-reduced-motion: reduce) {
-    [data-testid="collapsedControl"] { animation: none; }
-}
+}}
+@keyframes nudge {{
+    0%, 100% {{ transform: translateX(0); }}
+    50% {{ transform: translateX(4px); }}
+}}
+@media (prefers-reduced-motion: reduce) {{
+    [data-testid="collapsedControl"] {{ animation: none; }}
+}}
 
-/* ---- Mobile "open settings here" banner ----
-   Hidden on desktop/tablet; only shown on narrow screens, and only while
-   the sidebar is collapsed (Streamlit adds this same collapsedControl
-   element in that state, so we key off screen width here and rely on
-   the banner being harmless/inert once the sidebar is open). */
-.mobile-sidebar-hint {
+/* ---- Mobile "open settings here" banner ---- */
+.mobile-sidebar-hint {{
     display: none;
-}
-@media (max-width: 640px) {
-    .mobile-sidebar-hint {
+}}
+@media (max-width: 640px) {{
+    .mobile-sidebar-hint {{
         display: flex;
         align-items: center;
         gap: 10px;
         padding: 12px 14px;
         margin-bottom: 14px;
         border-radius: 10px;
-        border: 1px solid rgba(0,217,192,0.35);
-        background: rgba(0,217,192,0.08);
+        border: 1px solid var(--accent-dim);
+        background: color-mix(in srgb, var(--accent) 8%, transparent);
         color: var(--text);
         font-size: 0.88rem;
         line-height: 1.35;
-    }
-    .mobile-sidebar-hint .arrow-icon {
+    }}
+    .mobile-sidebar-hint .arrow-icon {{
         flex-shrink: 0;
         width: 26px; height: 26px;
         border-radius: 7px;
         background: var(--accent);
-        color: #04211D;
+        color: var(--accent-ink);
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
         animation: nudge 1.6s ease-in-out infinite;
-    }
-}
+    }}
+}}
 
 /* ---- Hero ---- */
-.recon-hero {
+.recon-hero {{
     display: flex;
     align-items: center;
     gap: 18px;
@@ -143,8 +206,9 @@ header[data-testid="stHeader"] button:hover {
     margin-bottom: 6px;
     position: relative;
     overflow: hidden;
-}
-.recon-hero::after {
+    box-shadow: var(--shadow);
+}}
+.recon-hero::after {{
     content: "";
     position: absolute;
     top: -50%; right: -10%;
@@ -152,8 +216,8 @@ header[data-testid="stHeader"] button:hover {
     border-radius: 50%;
     background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
     pointer-events: none;
-}
-.recon-sweep {
+}}
+.recon-sweep {{
     width: 46px; height: 46px;
     border-radius: 50%;
     border: 2px solid var(--accent);
@@ -161,34 +225,34 @@ header[data-testid="stHeader"] button:hover {
     flex-shrink: 0;
     background: conic-gradient(from 0deg, var(--accent) 0deg, transparent 70deg);
     animation: sweep 2.2s linear infinite;
-}
-.recon-sweep::before {
+}}
+.recon-sweep::before {{
     content: "";
     position: absolute;
     inset: 8px;
     border-radius: 50%;
     background: var(--panel);
-}
-@keyframes sweep { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) {
-    .recon-sweep { animation: none; }
-}
-.recon-hero h1 {
+}}
+@keyframes sweep {{ to {{ transform: rotate(360deg); }} }}
+@media (prefers-reduced-motion: reduce) {{
+    .recon-sweep {{ animation: none; }}
+}}
+.recon-hero h1 {{
     font-family: 'JetBrains Mono', monospace;
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--text);
     margin: 0;
     letter-spacing: -0.01em;
-}
-.recon-hero p {
+}}
+.recon-hero p {{
     color: var(--muted);
     margin: 4px 0 0 0;
     font-size: 0.92rem;
-}
+}}
 
 /* ---- Grade badge ---- */
-.grade-badge {
+.grade-badge {{
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -197,16 +261,16 @@ header[data-testid="stHeader"] button:hover {
     font-family: 'JetBrains Mono', monospace;
     font-weight: 700;
     font-size: 1.05rem;
-}
-.grade-A { background: rgba(46,213,115,0.15); color: var(--good); border: 1px solid rgba(46,213,115,0.35); }
-.grade-B { background: rgba(46,213,115,0.10); color: #7BE0A0; border: 1px solid rgba(46,213,115,0.25); }
-.grade-C { background: rgba(255,192,72,0.15); color: var(--warn); border: 1px solid rgba(255,192,72,0.35); }
-.grade-D { background: rgba(255,113,72,0.15); color: #FF8A5C; border: 1px solid rgba(255,113,72,0.35); }
-.grade-F { background: rgba(255,71,87,0.15); color: var(--bad); border: 1px solid rgba(255,71,87,0.35); }
-.grade-NA { background: rgba(122,134,153,0.12); color: var(--muted); border: 1px solid var(--line); }
+}}
+.grade-A {{ background: color-mix(in srgb, var(--good) 15%, transparent); color: var(--good); border: 1px solid color-mix(in srgb, var(--good) 35%, transparent); }}
+.grade-B {{ background: color-mix(in srgb, var(--good) 10%, transparent); color: var(--good-soft); border: 1px solid color-mix(in srgb, var(--good) 25%, transparent); }}
+.grade-C {{ background: color-mix(in srgb, var(--warn) 15%, transparent); color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent); }}
+.grade-D {{ background: color-mix(in srgb, var(--bad-soft) 15%, transparent); color: var(--bad-soft); border: 1px solid color-mix(in srgb, var(--bad-soft) 35%, transparent); }}
+.grade-F {{ background: color-mix(in srgb, var(--bad) 15%, transparent); color: var(--bad); border: 1px solid color-mix(in srgb, var(--bad) 35%, transparent); }}
+.grade-NA {{ background: color-mix(in srgb, var(--muted) 12%, transparent); color: var(--muted); border: 1px solid var(--line); }}
 
 /* ---- Risk pill ---- */
-.risk-pill {
+.risk-pill {{
     display: inline-block;
     padding: 3px 11px;
     border-radius: 999px;
@@ -215,16 +279,16 @@ header[data-testid="stHeader"] button:hover {
     font-family: 'JetBrains Mono', monospace;
     text-transform: uppercase;
     letter-spacing: 0.03em;
-}
-.risk-clean    { background: rgba(46,213,115,0.14); color: var(--good); }
-.risk-low      { background: rgba(46,213,115,0.10); color: #7BE0A0; }
-.risk-medium   { background: rgba(255,192,72,0.14); color: var(--warn); }
-.risk-high     { background: rgba(255,113,72,0.14); color: #FF8A5C; }
-.risk-critical { background: rgba(255,71,87,0.16); color: var(--bad); }
-.risk-unknown  { background: rgba(122,134,153,0.12); color: var(--muted); }
+}}
+.risk-clean    {{ background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); }}
+.risk-low      {{ background: color-mix(in srgb, var(--good) 10%, transparent); color: var(--good-soft); }}
+.risk-medium   {{ background: color-mix(in srgb, var(--warn) 14%, transparent); color: var(--warn); }}
+.risk-high     {{ background: color-mix(in srgb, var(--bad-soft) 14%, transparent); color: var(--bad-soft); }}
+.risk-critical {{ background: color-mix(in srgb, var(--bad) 16%, transparent); color: var(--bad); }}
+.risk-unknown  {{ background: color-mix(in srgb, var(--muted) 12%, transparent); color: var(--muted); }}
 
 /* ---- Tech chip ---- */
-.tech-chip {
+.tech-chip {{
     display: inline-block;
     padding: 2px 9px;
     margin: 2px 4px 2px 0;
@@ -234,70 +298,107 @@ header[data-testid="stHeader"] button:hover {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.76rem;
     color: var(--text);
-}
+}}
 
 /* ---- Card ---- */
-.recon-card {
+.recon-card {{
     border: 1px solid var(--line);
     border-radius: 12px;
     padding: 16px 18px;
     background: var(--panel);
-}
+}}
 
 /* Streamlit metric tiles */
-[data-testid="stMetric"] {
+[data-testid="stMetric"] {{
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: 12px;
     padding: 14px 16px;
-}
-[data-testid="stMetricLabel"] { color: var(--muted); }
+    box-shadow: var(--shadow);
+}}
+[data-testid="stMetricLabel"] {{ color: var(--muted); }}
+[data-testid="stMetricValue"] {{ color: var(--text); }}
+
+/* Generic containers / expanders pick up the panel surface */
+div[data-testid="stExpander"] {{
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--panel);
+}}
+div[data-testid="stVerticalBlockBorderWrapper"] {{
+    border-color: var(--line) !important;
+}}
+
+/* Inputs */
+.stTextInput input, .stTextArea textarea, .stSelectbox [data-baseweb="select"] {{
+    background: var(--panel-2) !important;
+    color: var(--text) !important;
+    border-color: var(--line) !important;
+}}
 
 /* Buttons */
-.stButton > button, .stDownloadButton > button {
+.stButton > button, .stDownloadButton > button {{
     border-radius: 8px;
     font-weight: 600;
     border: 1px solid var(--line);
-}
-.stButton > button[kind="primary"] {
+    color: var(--text);
+    background: var(--panel-2);
+    transition: background 0.15s ease, transform 0.1s ease;
+}}
+.stButton > button:hover, .stDownloadButton > button:hover {{
+    transform: translateY(-1px);
+}}
+.stButton > button[kind="primary"] {{
     background: var(--accent);
-    color: #04211D;
+    color: var(--accent-ink);
     border: none;
-}
-.stButton > button[kind="primary"]:hover {
-    background: #10E8CE;
-}
+}}
+.stButton > button[kind="primary"]:hover {{
+    background: var(--accent-hover);
+}}
 
 /* Tabs */
-.stTabs [data-baseweb="tab"] { font-family: 'JetBrains Mono', monospace; }
+.stTabs [data-baseweb="tab"] {{ font-family: 'JetBrains Mono', monospace; color: var(--muted); }}
+.stTabs [aria-selected="true"] {{ color: var(--accent) !important; }}
+.stTabs [data-baseweb="tab-highlight"] {{ background-color: var(--accent) !important; }}
 
 /* Divider */
-hr { border-color: var(--line) !important; }
+hr {{ border-color: var(--line) !important; }}
 
 /* ---- Mobile responsiveness ---- */
-@media (max-width: 640px) {
-    .recon-hero {
+@media (max-width: 640px) {{
+    .recon-hero {{
         flex-direction: column;
         align-items: flex-start;
         padding: 16px 16px;
         gap: 10px;
-    }
-    .recon-hero h1 { font-size: 1.15rem; }
-    .recon-hero p { font-size: 0.82rem; }
-    .recon-sweep { width: 36px; height: 36px; }
+    }}
+    .recon-hero h1 {{ font-size: 1.15rem; }}
+    .recon-hero p {{ font-size: 0.82rem; }}
+    .recon-sweep {{ width: 36px; height: 36px; }}
 
-    /* Metric tiles: keep readable instead of squeezing to near-zero width */
-    [data-testid="stMetric"] { padding: 10px 12px; }
-    [data-testid="stMetricValue"] { font-size: 1.15rem !important; }
+    [data-testid="stMetric"] {{ padding: 10px 12px; }}
+    [data-testid="stMetricValue"] {{ font-size: 1.15rem !important; }}
 
-    /* Buttons get a bit taller/more tappable on touch screens */
-    .stButton > button, .stDownloadButton > button {
+    .stButton > button, .stDownloadButton > button {{
         min-height: 44px;
         font-size: 0.92rem;
-    }
-}
+    }}
+
+    .main .block-container {{ padding-left: 0.9rem; padding-right: 0.9rem; }}
+}}
+
+/* ---- Small-tablet tightening ---- */
+@media (min-width: 641px) and (max-width: 900px) {{
+    .main .block-container {{ padding-left: 1.2rem; padding-right: 1.2rem; }}
+}}
 </style>
 """
+
+
+# Backwards-compatible default export (dark mode), so any existing code
+# importing CSS directly keeps working exactly as before.
+CSS = build_css("dark")
 
 
 def grade_badge(grade: str) -> str:
