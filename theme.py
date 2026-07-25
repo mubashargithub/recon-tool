@@ -21,26 +21,71 @@ CSS = """
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .stApp { background: radial-gradient(circle at 15% 0%, #101720 0%, var(--bg) 45%); }
 
+/* Push page content below the solid header so nothing hides underneath it */
+.main .block-container { padding-top: 1.5rem; }
+
 code, .mono, [data-testid="stMetricValue"] {
     font-family: 'JetBrains Mono', monospace !important;
 }
 
 /* Hide default chrome for a tighter console feel */
 #MainMenu, footer { visibility: hidden; }
-header[data-testid="stHeader"] { background: transparent; }
 
-/* ---- Make the sidebar-open arrow impossible to miss on mobile ---- */
-/* This is the little ">" arrow Streamlit shows top-left when the sidebar
-   is collapsed. On phones it's tiny and easy to never notice, so we make
-   it bigger, colored, and gently animated to draw the eye to it. */
+/* ---- Fix the top toolbar (Share / star / edit / GitHub / >> icons) ----
+   These sit in Streamlit's header, which we don't want fully invisible —
+   just restyled to match the dark theme so every icon stays legible on
+   both light and dark host backgrounds (browser chrome, embeds, etc). */
+header[data-testid="stHeader"] {
+    background: var(--panel) !important;
+    border-bottom: 1px solid var(--line);
+}
+header[data-testid="stHeader"] * {
+    color: var(--text) !important;
+    fill: var(--text) !important;
+    opacity: 1 !important;
+}
+header[data-testid="stHeader"] svg {
+    stroke: var(--text) !important;
+}
+header[data-testid="stHeader"] button:hover {
+    background: var(--panel-2) !important;
+    border-radius: 6px;
+}
+/* The "Share", "Star", "Edit", "GitHub" toolbar actions */
+[data-testid="stToolbarActions"] button,
+[data-testid="stToolbarActions"] a {
+    color: var(--text) !important;
+}
+[data-testid="stToolbarActions"] button:hover,
+[data-testid="stToolbarActions"] a:hover {
+    background: var(--panel-2) !important;
+}
+/* The ">>" deploy/expand control */
+[data-testid="stDecoration"],
+[data-testid="stStatusWidget"] {
+    background: transparent !important;
+}
+
+/* ---- Sidebar-open control (the arrow that opens scan settings) ----
+   Restyled as a clear, unmistakable pill-shaped button instead of the
+   default barely-visible icon, with a short always-visible label so
+   nobody has to guess what it does. */
 [data-testid="collapsedControl"] {
     background: var(--accent) !important;
     border-radius: 10px !important;
-    box-shadow: 0 0 0 4px rgba(0,217,192,0.18), 0 4px 14px rgba(0,0,0,0.4) !important;
+    box-shadow: 0 0 0 4px rgba(0,217,192,0.18), 0 4px 14px rgba(0,0,0,0.45) !important;
     animation: nudge 1.6s ease-in-out infinite;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
 }
 [data-testid="collapsedControl"] svg {
     fill: #04211D !important;
+    stroke: #04211D !important;
+    width: 22px !important;
+    height: 22px !important;
 }
 @keyframes nudge {
     0%, 100% { transform: translateX(0); }
