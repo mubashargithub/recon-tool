@@ -29,6 +29,63 @@ code, .mono, [data-testid="stMetricValue"] {
 #MainMenu, footer { visibility: hidden; }
 header[data-testid="stHeader"] { background: transparent; }
 
+/* ---- Make the sidebar-open arrow impossible to miss on mobile ---- */
+/* This is the little ">" arrow Streamlit shows top-left when the sidebar
+   is collapsed. On phones it's tiny and easy to never notice, so we make
+   it bigger, colored, and gently animated to draw the eye to it. */
+[data-testid="collapsedControl"] {
+    background: var(--accent) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 0 0 4px rgba(0,217,192,0.18), 0 4px 14px rgba(0,0,0,0.4) !important;
+    animation: nudge 1.6s ease-in-out infinite;
+}
+[data-testid="collapsedControl"] svg {
+    fill: #04211D !important;
+}
+@keyframes nudge {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    [data-testid="collapsedControl"] { animation: none; }
+}
+
+/* ---- Mobile "open settings here" banner ----
+   Hidden on desktop/tablet; only shown on narrow screens, and only while
+   the sidebar is collapsed (Streamlit adds this same collapsedControl
+   element in that state, so we key off screen width here and rely on
+   the banner being harmless/inert once the sidebar is open). */
+.mobile-sidebar-hint {
+    display: none;
+}
+@media (max-width: 640px) {
+    .mobile-sidebar-hint {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        margin-bottom: 14px;
+        border-radius: 10px;
+        border: 1px solid rgba(0,217,192,0.35);
+        background: rgba(0,217,192,0.08);
+        color: var(--text);
+        font-size: 0.88rem;
+        line-height: 1.35;
+    }
+    .mobile-sidebar-hint .arrow-icon {
+        flex-shrink: 0;
+        width: 26px; height: 26px;
+        border-radius: 7px;
+        background: var(--accent);
+        color: #04211D;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        animation: nudge 1.6s ease-in-out infinite;
+    }
+}
+
 /* ---- Hero ---- */
 .recon-hero {
     display: flex;
@@ -171,6 +228,29 @@ header[data-testid="stHeader"] { background: transparent; }
 
 /* Divider */
 hr { border-color: var(--line) !important; }
+
+/* ---- Mobile responsiveness ---- */
+@media (max-width: 640px) {
+    .recon-hero {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 16px;
+        gap: 10px;
+    }
+    .recon-hero h1 { font-size: 1.15rem; }
+    .recon-hero p { font-size: 0.82rem; }
+    .recon-sweep { width: 36px; height: 36px; }
+
+    /* Metric tiles: keep readable instead of squeezing to near-zero width */
+    [data-testid="stMetric"] { padding: 10px 12px; }
+    [data-testid="stMetricValue"] { font-size: 1.15rem !important; }
+
+    /* Buttons get a bit taller/more tappable on touch screens */
+    .stButton > button, .stDownloadButton > button {
+        min-height: 44px;
+        font-size: 0.92rem;
+    }
+}
 </style>
 """
 
