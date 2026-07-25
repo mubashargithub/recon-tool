@@ -43,7 +43,7 @@ st.set_page_config(page_title="Recon — Subdomain & Security Scanner", page_ico
 MAX_HISTORY = 8
 
 if "theme_mode" not in st.session_state:
-    st.session_state["theme_mode"] = "dark"
+    st.session_state["theme_mode"] = "light"
 
 st.markdown(build_css(st.session_state["theme_mode"]), unsafe_allow_html=True)
 
